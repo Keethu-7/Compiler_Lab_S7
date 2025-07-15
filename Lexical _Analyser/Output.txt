@@ -1,0 +1,19 @@
+The void is a keyword
+( is a parenthesis or brace
+) is a parenthesis or brace
+main is an identifier
+{ is a parenthesis or brace
+The int is a keyword
+, is a separator
+num1 is an identifier
+, is a separator
+num2 is an identifier
+; is a separator
+num3 is an identifier
+num3 is an identifier
+= is an operator
+num1 is an identifier
++ is an operator
+; is a separator
+num2 is an identifier
+} is a parenthesis or brace
