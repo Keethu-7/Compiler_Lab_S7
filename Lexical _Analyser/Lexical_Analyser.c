@@ -61,25 +61,38 @@ int main() {
     }
 
     while ((c = fgetc(fp)) != EOF) {
-        if(isOper(c)) {
-            printf("%c is an operator\n",c);
+        if (isOper(c)) {
+            printf("%c is an operator\n", c);
         }
-        if(isSepa(c)) {
-            printf("%c is an separator\n",c);
+        if (isSepa(c)) {
+            printf("%c is a separator\n", c);
         }
+        if (isParam(c)) {
+            printf("%c is a parenthesis or brace\n", c);
+        }
+    
         if (isalnum(c)) {
             buffer[j++] = c;
         }
         else if ((c == ' ' || c == '\t' || c == '\n') && (j != 0)) {
             buffer[j] = '\0';
             j = 0;
-
+    
             if (isKeyword(buffer))
-                printf("The %s is a  keyword\n", buffer);
+                printf("The %s is a keyword\n", buffer);
             else
                 printf("%s is an identifier\n", buffer);
         }
     }
+    
+    if (j != 0) {
+        buffer[j] = '\0';
+        if (isKeyword(buffer))
+            printf("The %s is a keyword\n", buffer);
+        else
+            printf("%s is an identifier\n", buffer);
+    }
+
     fclose(fp);
     return 0;
 }
