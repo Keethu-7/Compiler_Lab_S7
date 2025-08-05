@@ -1,0 +1,13 @@
+Enter your name (first input): Keerthana
+Stored prefix: Keer
+Now enter words to check (type 'exit' to quit):
+Keertana
+Rejected: Keertana
+Krishna
+Accepted: Krishna
+$#@!!
+Ignored special characters: $#@!!
+Keer123
+Rejected: Keer123
+exit
+Exiting...
