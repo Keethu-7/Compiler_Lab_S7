@@ -1,0 +1,13 @@
+Enter arithmetic expressions (Ctrl+C to exit):
+3 + 5
+Result: 8
+
+10 + 2 * 6
+Result: 22
+
+(10 + 2) * 6
+Result: 72
+
+5 / 0
+Error: Division by zero
+Result: 0
