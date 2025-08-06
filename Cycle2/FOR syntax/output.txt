@@ -1,0 +1,5 @@
+for(i = 0; i < 10; i++) x = x + 1;
+Valid for-loop syntax.
+
+for(i = 0; i < 10 i++) x = x + 1;
+Syntax Error: syntax error
