@@ -1,0 +1,8 @@
+abc123
+Valid variable name: abc123
+
+9abc
+Invalid variable name
+
+a@b
+Invalid variable name
