@@ -1,12 +1,21 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+
+int yylex(void);
+void yyerror(const char *s);
 %}
 
-%token NUMBER
+%union {
+    int num;
+}
+
+%token <num> NUMBER
 %left '+' '-'
 %left '*' '/'
 %left UMINUS
+
+%type <num> expr
 
 %%
 
@@ -16,20 +25,20 @@ input:
     ;
 
 expr:
-      NUMBER            { $$ = $1; }
-    | expr '+' expr     { $$ = $1 + $3; }
-    | expr '-' expr     { $$ = $1 - $3; }
-    | expr '*' expr     { $$ = $1 * $3; }
-    | expr '/' expr     {
-                          if ($3 == 0) {
-                            printf("Error: Division by zero\n");
-                            $$ = 0;
-                          } else {
-                            $$ = $1 / $3;
+      NUMBER              { $$ = $1; }
+    | expr '+' expr       { $$ = $1 + $3; }
+    | expr '-' expr       { $$ = $1 - $3; }
+    | expr '*' expr       { $$ = $1 * $3; }
+    | expr '/' expr       {
+                            if ($3 == 0) {
+                                printf("Error: Division by zero\n");
+                                $$ = 0;
+                            } else {
+                                $$ = $1 / $3;
+                            }
                           }
-                        }
     | '-' expr %prec UMINUS { $$ = -$2; }
-    | '(' expr ')'      { $$ = $2; }
+    | '(' expr ')'        { $$ = $2; }
     ;
 
 %%
@@ -40,7 +49,6 @@ int main() {
     return 0;
 }
 
-int yyerror(char *s) {
-    printf("Error: %s\n", s);
-    return 0;
+void yyerror(const char *s) {
+    printf("Syntax error: %s\n", s);
 }
