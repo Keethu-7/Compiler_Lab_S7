@@ -1,12 +1,14 @@
 %{
-#include "y.tab.h"
+#include "calc.tab.h"
+#include <stdlib.h>
 %}
 
 %%
 
-[0-9]+      { yylval = atoi(yytext); return NUMBER; }
-[+\-*/()]   { return yytext[0]; }
-[ \t\n]     ;   // skip whitespace
-.           { printf("Invalid character: %s\n", yytext); }
+[0-9]+        { yylval.num = atoi(yytext); return NUMBER; }
+[+\-*/()]     { return yytext[0]; }
+[ \t\r]+      ;  // Ignore whitespace
+\n            { return '\n'; }
+.             { printf("Invalid character: %s\n", yytext); }
 
 %%
