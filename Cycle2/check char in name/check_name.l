@@ -42,6 +42,10 @@ int initialized = 0;
 }
 %%
 
+int yywrap() {
+    return 1;
+}
+
 int main() {
     printf("Enter your name (first input): ");
     yylex();
