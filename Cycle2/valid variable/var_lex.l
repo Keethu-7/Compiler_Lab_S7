@@ -1,10 +1,10 @@
 %{
-#include "y.tab.h"
+#include "var_yacc.tab.h"
 %}
 
 %%
 
-[a-zA-Z][a-zA-Z0-9]*    { return IDENTIFIER; }
+[a-zA-Z_][a-zA-Z0-9_]*   { return IDENTIFIER; }
 .|\n                    { return yytext[0]; }
 
 %%
