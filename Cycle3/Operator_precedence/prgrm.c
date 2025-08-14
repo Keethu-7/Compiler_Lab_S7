@@ -1,22 +1,37 @@
 #include <stdio.h>
 #include <string.h>
 
-#define MAX 50
+#define MAX 100
 
 char stack[MAX], input[MAX];
 int top = -1;
 
-/* Push symbol to stack */
+/* Terminals used in precedence table (must match order) */
+char symbols[] = {'+', '*', 'i', '(', ')', '$'};
+
+/* Operator precedence table */
+char prec[6][6] = {
+    //    +    *    i    (    )    $
+    /*+*/ {'>', '<', '<', '<', '>', '>'},
+    /***/ {'>', '>', '<', '<', '>', '>'},
+    /*i*/ {'>', '>', 'E', 'E', '>', '>'},
+    /*(*/ {'<', '<', '<', '<', '=', 'E'},
+    /*)*/ {'>', '>', 'E', 'E', '>', '>'},
+    /*$*/ {'<', '<', '<', '<', 'E', '='}
+};
+
+/* Push symbol onto stack */
 void push(char c) {
     stack[++top] = c;
 }
 
-/* Pop top symbol */
+/* Pop top of stack */
 void pop() {
-    top--;
+    if (top >= 0)
+        top--;
 }
 
-/* Display stack and remaining input */
+/* Display current stack and remaining input */
 void display(int i) {
     for (int k = 0; k <= top; k++)
         printf("%c", stack[k]);
@@ -27,55 +42,75 @@ void display(int i) {
     printf("\t");
 }
 
-/* Symbols including $ */
-char symbols[] = {'+', '-', '*', '/', 'i', '(', ')', '$'};
-
-/* Operator precedence table
-   Rows: stack top
-   Cols: current input
-   Relations: < shift, > reduce, = equal precedence, E error
-*/
-char prec[8][8] = {
-    /*       +    -    *    /    i    (    )    $  */
-    /* + */ {'>', '>', '<', '<', '<', '<', '>', '>'},
-    /* - */ {'>', '>', '<', '<', '<', '<', '>', '>'},
-    /* * */ {'>', '>', '>', '>', '<', '<', '>', '>'},
-    /* / */ {'>', '>', '>', '>', '<', '<', '>', '>'},
-    /* i */ {'>', '>', '>', '>', 'E', 'E', '>', '>'},
-    /* ( */ {'<', '<', '<', '<', '<', '<', '=', 'E'},
-    /* ) */ {'>', '>', '>', '>', 'E', 'E', '>', '>'},
-    /* $ */ {'<', '<', '<', '<', '<', '<', 'E', '='}
-};
-
-/* Get index of symbol in precedence table */
+/* Return index of symbol in symbols array (for precedence table) */
 int getIndex(char c) {
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < 6; i++)
         if (symbols[i] == c)
             return i;
     return -1;
+}
+
+/* Get index of the topmost terminal in the stack */
+int getTopTerminalIndex() {
+    for (int j = top; j >= 0; j--) {
+        int idx = getIndex(stack[j]);
+        if (idx != -1)
+            return idx;
+    }
+    return -1; // No terminal found
+}
+
+/* Attempt to reduce the top of the stack according to grammar rules */
+int reduce() {
+    // E + E
+    if (top >= 2 && stack[top] == 'E' &&
+        (stack[top - 1] == '+' || stack[top - 1] == '*') &&
+        stack[top - 2] == 'E') {
+        top -= 2;
+        stack[top] = 'E';
+        return 1;
+    }
+
+    // ( E )
+    if (top >= 2 && stack[top] == ')' &&
+        stack[top - 1] == 'E' &&
+        stack[top - 2] == '(') {
+        top -= 2;
+        stack[top] = 'E';
+        return 1;
+    }
+
+    // i → E
+    if (top >= 0 && stack[top] == 'i') {
+        stack[top] = 'E';
+        return 1;
+    }
+
+    return 0; // No valid reduction
 }
 
 int main() {
     int i = 0;
     char action;
 
-    printf("Enter the input string (end with $): ");
+    printf("Enter the input string ending with $: ");
     scanf("%s", input);
 
     push('$');
+
     printf("\nStack\tInput\tAction\n");
 
     while (1) {
         display(i);
-        int row = getIndex(stack[top]);
-        int col = getIndex(input[i]);
+        int row = getTopTerminalIndex(); // fix: find nearest terminal
+        int col = getIndex(input[i]);    // current input symbol
 
         if (row == -1 || col == -1) {
             printf("Error (invalid symbol)\n");
             break;
         }
 
-        if (input[i] == '$' && stack[top] == '$') {
+        if (stack[top] == '$' && input[i] == '$' && top == 1 && stack[1] == 'E') {
             printf("Accept\n");
             break;
         }
@@ -86,13 +121,15 @@ int main() {
             printf("Shift\n");
             push(input[i]);
             i++;
-        } 
-        else if (action == '>') {
-            printf("Reduce\n");
-            pop(); // simple reduction
-        } 
-        else {
-            printf("Error\n");
+        } else if (action == '>') {
+            if (reduce()) {
+                printf("Reduce\n");
+            } else {
+                printf("Error (no valid reduction)\n");
+                break;
+            }
+        } else {
+            printf("Error (invalid precedence)\n");
             break;
         }
     }
