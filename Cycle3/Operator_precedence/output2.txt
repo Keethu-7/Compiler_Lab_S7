@@ -1,0 +1,14 @@
+Enter the input string ending with $: i+i*i$
+
+Stack	Input	Action
+$	i+i*i$	Shift
+$i	+i*i$	Reduce
+$E	+i*i$	Shift
+$E+	i*i$	Shift
+$E+i	*i$	Reduce
+$E+E	*i$	Shift
+$E+E*	i$	Shift
+$E+E*i	$	Reduce
+$E+E*E	$	Reduce
+$E+E	$	Reduce
+$E	$	Accept
