@@ -110,7 +110,7 @@ int main() {
             break;
         }
 
-        // ✅ Accept condition: stack = $E and input = $
+        // Accept condition: stack = $E and input = $
         if (input[i] == '$' && top == 1 && stack[0] == '$' && stack[1] == 'E') {
             printf("Accept\n");
             break;
